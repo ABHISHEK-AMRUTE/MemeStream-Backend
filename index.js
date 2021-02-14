@@ -2,8 +2,9 @@ const express = require('express')
 const bodyParser = require('body-parser');
 const app =express();
 const mongoose = require('mongoose')
-
-mongoose.connect(process.env.URL, {
+const mongooesUrl = process.env.URL 
+const PORT = process.env.PORT || 3000
+mongoose.connect(mongooesUrl, {
     useCreateIndex: true,
     useNewUrlParser: true,
     useUnifiedTopology: true
@@ -40,6 +41,7 @@ app.post('/meme',(req,res)=>{
         url : req.body.url
        
     }).exec(function(err,doc){
+        
         if(err){
             
             res.send({
@@ -66,6 +68,7 @@ app.post('/meme',(req,res)=>{
                 
              }else{
                  res.send({
+                     error:"Same record found! Are you stealling memes? LOL",
                     message : "Error occured! Already exists"
                 })
              }
@@ -77,7 +80,7 @@ app.post('/meme',(req,res)=>{
 })
 
 app.get('/meme',(req,res)=>{
-    memeModel.find().exec(function(error,doc){
+    memeModel.find().sort({'id':-1}).limit(100).exec(function(error,doc){
         if(doc){
             res.send(doc);
         }
@@ -158,6 +161,6 @@ app.get('/memeByName/:name',(req,res)=>{
 })
 
 
-app.listen(process.env.PORT,()=>{
+app.listen(PORT,()=>{
  console.log("servver uppppppppp.")
 })
