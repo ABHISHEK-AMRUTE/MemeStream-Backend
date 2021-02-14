@@ -2,7 +2,7 @@ const express = require('express')
 const bodyParser = require('body-parser');
 const app =express();
 const mongoose = require('mongoose')
-const mongooesUrl = process.env.URL || 'mongodb+srv://Abhishek:abhishekamruteonline@cluster0-b9n3j.mongodb.net/test?retryWrites=true&w=majority'
+const mongooesUrl = process.env.URL 
 const PORT = process.env.PORT || 3000
 mongoose.connect(mongooesUrl, {
     useCreateIndex: true,
