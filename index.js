@@ -2,7 +2,7 @@ const express = require('express')
 const bodyParser = require('body-parser');
 const app =express();
 const mongoose = require('mongoose')
-const mongooesUrl = process.env.URL 
+const mongooesUrl = process.env.URL || 'mongodb+srv://Abhishek:abhishekamruteonline@cluster0-b9n3j.mongodb.net/test?retryWrites=true&w=majority'
 const PORT = process.env.PORT || 3000
 mongoose.connect(mongooesUrl, {
     useCreateIndex: true,
@@ -24,7 +24,7 @@ app.use(function (req, res, next) {
 });
 
 
-app.post('/meme',(req,res)=>{
+app.post('/memes',(req,res)=>{
     console.log(req.body.name, req.body.caption , req.body.url)
     
     var obj = new memeModel({
@@ -44,7 +44,7 @@ app.post('/meme',(req,res)=>{
         
         if(err){
             
-            res.send({
+            res.status(500).send({
                 message : "Error occured! Try again Later"
             })
         }
@@ -54,20 +54,20 @@ app.post('/meme',(req,res)=>{
              {
                 obj.save().then((objj)=>{
                     console.log(objj)
-                    res.send({
+                    res.status(201).send({
                         message : "Posted your meme on server",
                         id: objj.id
 
                     })
                 }).catch((e)=>{
-                    res.send({
+                    res.status(500).send({
                         message : "Error in storing data",
                         error : e
                     })
                 })
                 
              }else{
-                 res.send({
+                 res.status(406).send({
                      error:"Same record found! Are you stealling memes? LOL",
                     message : "Error occured! Already exists"
                 })
@@ -79,13 +79,13 @@ app.post('/meme',(req,res)=>{
     
 })
 
-app.get('/meme',(req,res)=>{
+app.get('/memes',(req,res)=>{
     memeModel.find().sort({'id':-1}).limit(100).exec(function(error,doc){
         if(doc){
-            res.send(doc);
+            res.status(200).send(doc);
         }
         else{
-            res.send({
+            res.status(500).send({
                 message : "Error in fetching data",
                 
             })
@@ -94,7 +94,7 @@ app.get('/meme',(req,res)=>{
 })
 
 
-app.patch('/meme/:id',(req,res)=>{
+app.patch('/memes/:id',(req,res)=>{
         
         
         memeModel.updateOne({
@@ -104,41 +104,41 @@ app.patch('/meme/:id',(req,res)=>{
         function(err,doc){
                 if(err)
                 {
-                    res.send({
+                    res.status(500).send({
                         message : "Error while updating the meme" 
                     })
                 }
-                res.send({
+                res.status(202).send({
                     message : "Reacted successfuly"
                 })
         });
 
 })
 
-app.delete('/meme/:id',(req,res)=>{
+app.delete('/memes/:id',(req,res)=>{
     memeModel.deleteOne({id:req.params.id}).then(()=>{
-        res.send({
+        res.status(202).send({
             message : "Deleted The record" 
         })
     }).catch((err)=>{
-        res.send({
+        res.status(500).send({
             message : "Error in deleting to the meme",
             error: err 
         })
     })
 })
 
-app.get('/meme/:id',(req,res)=>{
+app.get('/memes/:id',(req,res)=>{
     memeModel.findOne({id:req.params.id}).exec(function(err,doc){
   
          if(err){
-                     res.send({
-                        message : "Error in deleting to the meme",
+                     res.status(500).send({
+                        message : "Error in fetching the meme",
                         error: err
                      })
          }
 
-         res.send(doc);
+         res.status(200).send(doc);
 
     })
 })
@@ -149,13 +149,13 @@ app.get('/memeByName/:name',(req,res)=>{
     memeModel.find({name:req.params.name}).exec(function(err,doc){
   
          if(err){
-                     res.send({
+                     res.status(500).send({
                         message : "Error in deleting to the meme",
                         error: err
                      })
          }
 
-         res.send(doc);
+         res.status(200).send(doc);
 
     })
 })
